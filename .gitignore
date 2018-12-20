@@ -21,3 +21,4 @@ de265-config.h
 *.ncb
 *.suo
 *.vcproj*
+build*
