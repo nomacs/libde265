@@ -2,15 +2,21 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([libde265], [1.0.3], [farin@struktur.de])
+AC_INIT([libde265], [1.0.5], [farin@struktur.de])
 AC_CONFIG_SRCDIR([libde265/de265.cc])
 AC_CONFIG_HEADERS([config.h])
 
-NUMERIC_VERSION=0x01000300 # Numeric representation of the version (A.B.C[.D] = 0xAABBCCDD)
+NUMERIC_VERSION=0x01000500 # Numeric representation of the version (A.B.C[.D] = 0xAABBCCDD)
 AC_SUBST(NUMERIC_VERSION)
 
+# From https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html:
+# If the library source code has changed at all since the last update, then increment revision (‘c:r:a’ becomes ‘c:r+1:a’).
+# If any interfaces have been added, removed, or changed since the last update, increment current, and set revision to 0.
+# If any interfaces have been added since the last public release, then increment age.
+# If any interfaces have been removed or changed since the last public release, then set age to 0.
+
 LIBDE265_CURRENT=0
-LIBDE265_REVISION=10
+LIBDE265_REVISION=12
 LIBDE265_AGE=0
 
 # ---------------------------------------------------------------------------
@@ -138,15 +144,17 @@ if eval "test x$has_std_shared_ptr = xno"; then
 fi
 AC_LANG_POP(C++)
 
-# Check if "std::move" is available
+# Check if "std::move" is available (assume always available with clang)
 AC_MSG_CHECKING([for std::move])
 AC_LANG_PUSH(C++)
 AC_TRY_COMPILE([
 #include <utility>
 ],[
+#if !defined(__clang__)
 class A {};
 A* a = new A();
 A* b = std::move(a);
+#endif
 ],[has_std_move=yes],[has_std_move=no]);
 AC_LANG_POP(C++)
 if eval "test x$has_std_move = xno"; then
